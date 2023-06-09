@@ -17,14 +17,11 @@
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.language>java</sonar.language>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-		<sonar.sources>src/main</sonar.sources>
-		<sonar.tests>src/test</sonar.tests>
-		<sonar.binaries>${project.basedir}/../target/classes</sonar.binaries>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-	    <sonar.exclusions>
-	    	com/mc/employee/view/*,
-	    	com/mc/employee/entity/*,
-	    	com/mc/employee/exception/*
+		<sonar.exclusions>
+	    	src/main/java/com/mc/employee/view/*,
+	    	src/main/java/com/mc/employee/entity/*,
+	    	src/main/java/com/mc/employee/exception/*
 	    </sonar.exclusions>
 	</properties>
 	<dependencies>
@@ -77,6 +74,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>0.8.10</version>
 		</dependency>
 	</dependencies>
 
