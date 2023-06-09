@@ -43,18 +43,27 @@ HTTPS URL example: https://localhost:8443/api/v1/employee
 
 Postman project is attached to the source code.
 
-File [Employee.postman_collection.json]
+Check file [Employee.postman_collection.json] in the project docs folder in GitHub.
 
 ## This application uses a H2 in-memory database.
 
 > http://localhost:8080/h2-console
 
+- JDBC URL: jdbc:h2:mem:employeedb
 - Username: sa
 - Password: password
 
 ## Zipkin
 
-Use Zipkin to monitor application performance. This is optional.
+Use Zipkin to monitor application performance. This step is optional if want to enable observability.
+
+Edit application.yaml to enable Zipkin tracing. 
+
+> Set spring.zipkin.enabled: true
+
+Zipkin starts as per default in below url.
+
+http://localhost:9411/zipkin/
 
 ### Download
 
