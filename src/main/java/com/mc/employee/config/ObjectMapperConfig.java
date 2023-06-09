@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ObjectMapperConfig {
 	@Bean
 	@Primary
-	public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
+	ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
 		ObjectMapper objectMapper = builder.createXmlMapper(false).build();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 		objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
