@@ -51,11 +51,11 @@ public class EmployeeView {
 	@Schema(description = "Employee annual base salary", example = "1000000.99", nullable = true)
 	@NotNull
 	private BigDecimal salary;
-
-	@Schema(description = "Employee reporting manager. Only field 'id' is required.", nullable = true)
-	private EmployeeView reportingManager;
-
+	
 	@Schema(description = "Employee department", nullable = false)
 	@NotNull
 	private Department department;
+
+	@Schema(description = "Employee reporting manager. Only field 'id' is required.", nullable = true)
+	private EmployeeView reportingManager;
 }

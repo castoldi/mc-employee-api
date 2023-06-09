@@ -1,5 +1,7 @@
 package com.mc.employee.controller;
 
+import java.math.BigDecimal;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,30 +31,33 @@ public class CostAllocationController {
 	private final CostAllocationService costAllocationService;
 	private final EmployeeService employeeService;
 
-	@Operation(summary = "Calculate the cost allocation of a Department, disregarding the manager's salary.")
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Calculated cost allocation") })
+	@Operation(summary = "Calculate the cost allocation of a Department.")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Cost allocation calculation succeeded.") })
 	@GetMapping(path = "/department/{department}")
 	public CostAllocationResponse calculateCostsByDepartment(@Valid @PathVariable Department department) {
+		
+		BigDecimal totalCostAllocationByDeparment = costAllocationService.calculateCostAllocationByDeparment(department);
+		
 		return CostAllocationResponse.builder()
 				.department(department)
-				.totalCostByDepartment(costAllocationService.calculateCostAllocationByDeparment(department))
+				.totalCostByDepartment(totalCostAllocationByDeparment)
 				.build();
 	}
 
 	@Operation(summary = "Calculate the cost allocation of a Manager, disregarding the manager's salary.")
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Calculated cost allocation"), 
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Cost allocation calculation succeeded."), 
 			@ApiResponse(responseCode = "404", description = "Manager not found") })
 	@GetMapping(path = "/manager/{employeeId}")
 	public CostAllocationResponse calculateCostsByManager(@Valid @PathVariable Long employeeId) throws  EmployeeNotFoundException {
 		
 		Employee manager = employeeService.findById(employeeId);
 		
+		BigDecimal totalCostAllocationByManager = costAllocationService.calculateCostAllocationByManager(employeeId);
+		
 		return CostAllocationResponse.builder()
 				.managerId(employeeId)
 				.managerName(manager.getName())
-				.totalCostByManager(costAllocationService.calculateCostAllocationByManager(employeeId))
+				.totalCostByManager(totalCostAllocationByManager)
 				.build();
-
 	}
-
 }

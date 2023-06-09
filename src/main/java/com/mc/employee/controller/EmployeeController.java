@@ -61,13 +61,9 @@ public class EmployeeController {
 		log.info("Add a new employee");
 		
 		EmployeeView employeeView = request.getEmployeeView();
-		
 		Employee employee = employeeService.convertToEmployee(employeeView);
-		if (employeeView.getReportingManager() != null) {
-			Employee manager = employeeService.findById(employeeView.getReportingManager().getId());
-			employee.setReportingManager(manager);
-			employeeView.setReportingManager(employeeService.convertToView(manager));
-		}
+		
+		completeManagerInfo(employeeView, employee);
 		
 		employeeRequestValidator.validateEmployeeInfo(employeeView);
 		
@@ -75,6 +71,18 @@ public class EmployeeController {
 		
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(employee.getId()).toUri();
 		return ResponseEntity.created(location).build();
+	}
+
+	/**
+	 * Completing the manager info in order to run the Same Department validation.
+	 */
+	private void completeManagerInfo(EmployeeView employeeView, Employee employee) throws EmployeeNotFoundException {
+		if (employeeView.getReportingManager() != null) {
+			log.info("Completing reporting manager information given the managerId={}", employeeView.getReportingManager().getId());
+			Employee manager = employeeService.findById(employeeView.getReportingManager().getId());
+			employee.setReportingManager(manager);
+			employeeView.setReportingManager(employeeService.convertToView(manager));
+		}
 	}
 
 	@PutMapping

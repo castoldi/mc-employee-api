@@ -21,9 +21,6 @@ public interface EmployeeService {
 	List<Employee> findAll();
 
 	@NewSpan
-	List<Employee> findByName(String name);
-
-	@NewSpan
 	List<Employee> findByDepartment(Department department);
 
 	@NewSpan

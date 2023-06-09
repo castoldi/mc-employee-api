@@ -13,11 +13,15 @@ import com.mc.employee.view.EmployeeRequest;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class EmployeeRequestValidator {
 
 	public void validateEmployeeInfo(EmployeeView input) throws MethodArgumentNotValidException, NoSuchMethodException, SecurityException {
+		log.info("Running Spring Validation on EmployeeView input. employeeId={}", input.getId());
+		
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
 

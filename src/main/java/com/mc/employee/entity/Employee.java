@@ -45,9 +45,9 @@ public class Employee {
 	@NotNull
 	private BigDecimal salary;
 
-	@ManyToOne
-	private Employee reportingManager;
-
 	@NotNull
 	private Department department;
+
+	@ManyToOne
+	private Employee reportingManager;
 }

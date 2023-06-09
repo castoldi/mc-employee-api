@@ -12,7 +12,7 @@ import com.mc.employee.view.EmployeeView;
  */
 @Component
 public class EmployeeMapper {
-	public EmployeeView convertEmployee(Employee employee) {
+	public EmployeeView mapEmployee(Employee employee) {
 		EmployeeView info = null;
 		
 		if (employee != null) {
@@ -24,35 +24,35 @@ public class EmployeeMapper {
 				.dateOfBirth(employee.getDateOfBirth())
 				.email(employee.getEmail())
 				.department(employee.getDepartment())
-				.reportingManager(convertEmployee(employee.getReportingManager()))
+				.reportingManager(mapEmployee(employee.getReportingManager()))
 				.build();
 		}
 		
 		return info;
 	}
 
-	public Employee convertEmployeeInfo(EmployeeView info) {
+	public Employee mapEmployeeView(EmployeeView view) {
 		Employee employee = null;
 		
-		if (info != null) {
+		if (view != null) {
 			employee = Employee.builder()
-					.id(info.getId())
-					.name(info.getName())
-					.salary(info.getSalary())
-					.role(info.getRole())
-					.dateOfBirth(info.getDateOfBirth())
-					.email(info.getEmail())
-					.department(info.getDepartment())
-					.reportingManager(convertEmployeeInfo(info.getReportingManager()))
+					.id(view.getId())
+					.name(view.getName())
+					.salary(view.getSalary())
+					.role(view.getRole())
+					.dateOfBirth(view.getDateOfBirth())
+					.email(view.getEmail())
+					.department(view.getDepartment())
+					.reportingManager(mapEmployeeView(view.getReportingManager()))
 					.build();
 		}
 		
 		return employee;
 	}
 
-	public List<EmployeeView> convertEmployeeList(List<Employee> employees) {
+	public List<EmployeeView> mapEmployeeList(List<Employee> employees) {
 		return employees.stream()
-				.map(this::convertEmployee)
+				.map(this::mapEmployee)
 				.toList();
 	}
 }

@@ -21,6 +21,11 @@
 		<sonar.tests>src/test</sonar.tests>
 		<sonar.binaries>${project.basedir}/../target/classes</sonar.binaries>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+	    <sonar.exclusions>
+	    	com/mc/employee/view/*,
+	    	com/mc/employee/entity/*,
+	    	com/mc/employee/exception/*
+	    </sonar.exclusions>
 	</properties>
 	<dependencies>
 		<dependency>

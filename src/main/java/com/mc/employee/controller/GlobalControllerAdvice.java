@@ -40,7 +40,7 @@ public class GlobalControllerAdvice {
 	public ResponseEntity<List<ErrorMessage>> handleValidationErrors(MethodArgumentNotValidException ex) {
 		log.warn("Validation error occourred. {}, {}", ex.getMessage(), ex.getParameter());
 		
-		List<ErrorMessage> errors = ex.getBindingResult().getFieldErrors().stream().map(e -> new ErrorMessage(e.getDefaultMessage())).collect(Collectors.toList());
+		List<ErrorMessage> errors = ex.getBindingResult().getFieldErrors().stream().map(e -> new ErrorMessage(e.getField() + " " + e.getDefaultMessage())).collect(Collectors.toList());
 		errors.addAll(ex.getBindingResult().getGlobalErrors().stream().map(e -> new ErrorMessage(e.getDefaultMessage())).toList());
 
 		return new ResponseEntity<>(errors, new HttpHeaders(), HttpStatus.BAD_REQUEST);

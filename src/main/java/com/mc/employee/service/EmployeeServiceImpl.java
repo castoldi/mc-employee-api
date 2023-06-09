@@ -50,12 +50,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 	
 	@Override
-	public List<Employee> findByName(String name) {
-		log.info("Find employees by name");
-		return repository.findByNameContains(name);
-	}
-
-	@Override
 	public List<Employee> findByDepartment(Department department) {
 		log.info("Find employees by department={}", department);
 		return repository.findByDepartment(department);
@@ -81,16 +75,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Override
 	public List<EmployeeView> convertToView(List<Employee> employees) {
-		return mapper.convertEmployeeList(employees);
+		return mapper.mapEmployeeList(employees);
 	}
 
 	@Override
-	public EmployeeView convertToView(Employee employeeView) {
-		return mapper.convertEmployee(employeeView);
+	public EmployeeView convertToView(Employee employee) {
+		return mapper.mapEmployee(employee);
 	}
 
 	@Override
 	public Employee convertToEmployee(EmployeeView employeeView) {
-		return mapper.convertEmployeeInfo(employeeView);
+		return mapper.mapEmployeeView(employeeView);
 	}
 }
