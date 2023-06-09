@@ -1,19 +1,15 @@
 package com.mc.employee.validation;
 
-import com.mc.employee.info.EmployeeInfo;
+import com.mc.employee.view.EmployeeView;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SameDepartmentValidator implements ConstraintValidator<SameDepartmentConstraint, EmployeeInfo> {
+public class SameDepartmentValidator implements ConstraintValidator<SameDepartmentConstraint, EmployeeView> {
 	@Override
-	public void initialize(SameDepartmentConstraint constraintAnnotation) {
-	}
-
-	@Override
-	public boolean isValid(EmployeeInfo employee, ConstraintValidatorContext context) {
+	public boolean isValid(EmployeeView employee, ConstraintValidatorContext context) {
 		
 		if (employee.getDepartment() == null || employee.getReportingManager() == null) {
 			return true;

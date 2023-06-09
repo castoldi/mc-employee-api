@@ -1,4 +1,4 @@
-package com.mc.employee.info;
+package com.mc.employee.view;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,12 +18,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * View Object that is used to send and receive data from the endpoints.   
+ */
 @SameDepartmentConstraint
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmployeeInfo {
+public class EmployeeView {
 
 	@Id
 	@GeneratedValue
@@ -50,7 +53,7 @@ public class EmployeeInfo {
 	private BigDecimal salary;
 
 	@Schema(description = "Employee reporting manager. Only field 'id' is required.", nullable = true)
-	private EmployeeInfo reportingManager;
+	private EmployeeView reportingManager;
 
 	@Schema(description = "Employee department", nullable = false)
 	@NotNull

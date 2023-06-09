@@ -3,13 +3,14 @@
 ## Overview
 The API was built using Spring 3.1.0 with Java 17.
 
-- Users of this application should be able to:
--- Add a new employee
--- Update an employee’s detail.
--- Remove an employee
--- List Department structure. (ie. All employees in a hierarchy)
--- Calculate the cost allocation of a Department.
--- Calculate the cost allocation of a Manager. 
+Users of this application should be able to:
+
+- Add a new employee
+- Update an employee’s detail.
+- Remove an employee
+- List Department structure. (ie. All employees in a hierarchy)
+- Calculate the cost allocation of a Department.
+- Calculate the cost allocation of a Manager. 
 
 ## Pre-requisites
 
@@ -43,6 +44,13 @@ HTTPS URL example: https://localhost:8443/api/v1/employee
 Postman project is attached to the source code.
 
 File [Employee.postman_collection.json]
+
+## This application uses a H2 in-memory database.
+
+> http://localhost:8080/h2-console
+
+- Username: sa
+- Password: password
 
 ## Zipkin
 

@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.mc.employee.entity.Department;
 import com.mc.employee.entity.Employee;
-import com.mc.employee.exception.ReportingManagerNotFoundException;
+import com.mc.employee.exception.EmployeeNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class CostAllocationServiceTest {
@@ -39,7 +39,7 @@ class CostAllocationServiceTest {
 	}
 
 	@Test
-	void testCalculateCostAllocationByManager() throws ReportingManagerNotFoundException {
+	void testCalculateCostAllocationByManager() throws EmployeeNotFoundException {
 		List<Employee> employees = createEmployeesList();
 
 		when(employeeService.findByReportingManager(1L)).thenReturn(employees);

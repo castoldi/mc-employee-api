@@ -14,6 +14,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Persistent Employee object. 
+ *
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -34,7 +38,7 @@ public class Employee {
 	@NotNull
 	private LocalDate dateOfBirth;
 
-	@Column(unique = true)
+	@Column(unique = true, length = 255)
 	@NotNull
 	private String email;
 

@@ -12,22 +12,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.mc.employee.entity.Employee;
 import com.mc.employee.exception.EmployeeNotFoundException;
-import com.mc.employee.info.EmployeeInfo;
-import com.mc.employee.info.EmployeeRequest;
 import com.mc.employee.service.EmployeeService;
 import com.mc.employee.validation.EmployeeRequestValidator;
+import com.mc.employee.view.EmployeeRequest;
+import com.mc.employee.view.EmployeeView;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Employee  controller. Used to create, update, remove and view employees.
+ */
 @RestController
 @Slf4j
 @RequestMapping("/api/v1/employee")
@@ -37,31 +39,37 @@ public class EmployeeController {
 	private final EmployeeRequestValidator employeeRequestValidator;
 
 	@GetMapping
-	public List<EmployeeInfo> findAll() {
+	public List<EmployeeView> findAll() {
+		log.info("Find all employees.");
+		
 		List<Employee> employees = employeeService.findAll();
-		return employeeService.convertToInfo(employees);
+		return employeeService.convertToView(employees);
 	}
 
 	@GetMapping(path = "/{employeeId}")
-	public EmployeeInfo findEmployeeById(@PathVariable Long employeeId) throws EmployeeNotFoundException {
+	public EmployeeView findEmployeeById(@PathVariable Long employeeId) throws EmployeeNotFoundException {
+		log.info("Find employee by id={}", employeeId);
+		
 		Employee employee = employeeService.findById(employeeId);
-		return employeeService.convertToInfo(employee);
+		return employeeService.convertToView(employee);
 	}
 
 	@SneakyThrows
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Void> addEmployee(@RequestBody EmployeeRequest request) {
-		EmployeeInfo employeeInfo = request.getEmployeeInfo();
+		log.info("Add a new employee");
 		
-		Employee employee = employeeService.convertToEmployee(employeeInfo);
-		if (employeeInfo.getReportingManager() != null) {
-			Employee manager = employeeService.findById(employeeInfo.getReportingManager().getId());
+		EmployeeView employeeView = request.getEmployeeView();
+		
+		Employee employee = employeeService.convertToEmployee(employeeView);
+		if (employeeView.getReportingManager() != null) {
+			Employee manager = employeeService.findById(employeeView.getReportingManager().getId());
 			employee.setReportingManager(manager);
-			employeeInfo.setReportingManager(employeeService.convertToInfo(manager));
+			employeeView.setReportingManager(employeeService.convertToView(manager));
 		}
 		
-		employeeRequestValidator.validateEmployeeInfo(employeeInfo);
+		employeeRequestValidator.validateEmployeeInfo(employeeView);
 		
 		employee = employeeService.save(employee);
 		
@@ -72,32 +80,29 @@ public class EmployeeController {
 	@PutMapping
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void updateEmployee(@RequestBody EmployeeRequest request) throws EmployeeNotFoundException {
-		EmployeeInfo employeeInfo = request.getEmployeeInfo();
+		log.info("Update an employee’s detail.");
+		
+		EmployeeView employeeView = request.getEmployeeView();
 
-		Employee employee = employeeService.findById(employeeInfo.getId());
-		Employee manager = employeeService.findById(employeeInfo.getReportingManager().getId());
+		Employee employee = employeeService.findById(employeeView.getId());
+		Employee manager = employeeService.findById(employeeView.getReportingManager().getId());
 
-		employee.setDateOfBirth(employeeInfo.getDateOfBirth());
-		employee.setDepartment(employeeInfo.getDepartment());
-		employee.setName(employeeInfo.getName());
+		employee.setDateOfBirth(employeeView.getDateOfBirth());
+		employee.setDepartment(employeeView.getDepartment());
+		employee.setName(employeeView.getName());
 		employee.setReportingManager(manager);
-		employee.setRole(employeeInfo.getRole());
-		employee.setSalary(employeeInfo.getSalary());
-		employee.setEmail(employeeInfo.getEmail());
+		employee.setRole(employeeView.getRole());
+		employee.setSalary(employeeView.getSalary());
+		employee.setEmail(employeeView.getEmail());
 
 		employeeService.save(employee);
 	}
 
-	@GetMapping("/search")
-	public List<EmployeeInfo> search(@RequestParam String name) {
-		log.info("Search employee by name");
-		List<Employee> employees = employeeService.findByName(name);
-		return employeeService.convertToInfo(employees);
-	}
 
 	@DeleteMapping(path = "/{employeeId}")
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable Long employeeId) throws EmployeeNotFoundException {
+		log.info("Remove an employee id={}", employeeId);
 
 		if (!employeeService.exists(employeeId)) {
 			throw new EmployeeNotFoundException(employeeId);

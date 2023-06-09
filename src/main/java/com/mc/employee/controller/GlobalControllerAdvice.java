@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 import com.mc.employee.exception.EmployeeNotFoundException;
-import com.mc.employee.exception.ReportingManagerNotFoundException;
-import com.mc.employee.info.ErrorMessage;
+import com.mc.employee.view.ErrorMessage;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -29,13 +28,6 @@ public class GlobalControllerAdvice {
 		return new ResponseEntity<	>(error, HttpStatus.NOT_FOUND);
 	}
 
-	@ExceptionHandler(value = ReportingManagerNotFoundException.class)
-	public ResponseEntity<ErrorMessage> resourceNotFoundException(ReportingManagerNotFoundException exception, WebRequest request) {
-		log.warn(exception.getMessage());
-		ErrorMessage error = ErrorMessage.builder().error(exception.getMessage()).build();
-		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-	}
-
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<ErrorMessage> onConstraintValidationException(ConstraintViolationException exception) {
 		log.warn("onConstraintValidationException. {}", exception.getMessage());
@@ -49,7 +41,7 @@ public class GlobalControllerAdvice {
 		log.warn("Validation error occourred. {}, {}", ex.getMessage(), ex.getParameter());
 		
 		List<ErrorMessage> errors = ex.getBindingResult().getFieldErrors().stream().map(e -> new ErrorMessage(e.getDefaultMessage())).collect(Collectors.toList());
-		errors.addAll(ex.getBindingResult().getGlobalErrors().stream().map(e -> new ErrorMessage(e.getDefaultMessage())).collect(Collectors.toList()));
+		errors.addAll(ex.getBindingResult().getGlobalErrors().stream().map(e -> new ErrorMessage(e.getDefaultMessage())).toList());
 
 		return new ResponseEntity<>(errors, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 	}

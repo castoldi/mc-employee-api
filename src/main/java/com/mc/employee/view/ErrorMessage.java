@@ -1,4 +1,4 @@
-package com.mc.employee.info;
+package com.mc.employee.view;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class EmployeeRequest {
-	private EmployeeInfo employeeInfo;
+@AllArgsConstructor
+public class ErrorMessage {
+	private String error;
 }

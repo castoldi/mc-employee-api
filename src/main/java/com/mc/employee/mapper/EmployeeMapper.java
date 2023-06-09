@@ -1,20 +1,22 @@
-package com.mc.employee.service;
+package com.mc.employee.mapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
 import com.mc.employee.entity.Employee;
-import com.mc.employee.info.EmployeeInfo;
+import com.mc.employee.view.EmployeeView;
 
+/**
+ * Mapping employee view and entity/model.
+ */
 @Component
-public class EmployeeConverter {
-	public EmployeeInfo convertEmployee(Employee employee) {
-		EmployeeInfo info = null;
+public class EmployeeMapper {
+	public EmployeeView convertEmployee(Employee employee) {
+		EmployeeView info = null;
 		
 		if (employee != null) {
-			info = EmployeeInfo.builder()
+			info = EmployeeView.builder()
 				.id(employee.getId())
 				.name(employee.getName())
 				.salary(employee.getSalary())
@@ -29,7 +31,7 @@ public class EmployeeConverter {
 		return info;
 	}
 
-	public Employee convertEmployeeInfo(EmployeeInfo info) {
+	public Employee convertEmployeeInfo(EmployeeView info) {
 		Employee employee = null;
 		
 		if (info != null) {
@@ -48,9 +50,9 @@ public class EmployeeConverter {
 		return employee;
 	}
 
-	public List<EmployeeInfo> convertEmployeeList(List<Employee> employees) {
+	public List<EmployeeView> convertEmployeeList(List<Employee> employees) {
 		return employees.stream()
-				.map(employee -> convertEmployee(employee))
-				.collect(Collectors.toList());
+				.map(this::convertEmployee)
+				.toList();
 	}
 }

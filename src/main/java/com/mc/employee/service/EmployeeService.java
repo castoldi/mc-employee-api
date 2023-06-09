@@ -5,7 +5,7 @@ import java.util.List;
 import com.mc.employee.entity.Department;
 import com.mc.employee.entity.Employee;
 import com.mc.employee.exception.EmployeeNotFoundException;
-import com.mc.employee.info.EmployeeInfo;
+import com.mc.employee.view.EmployeeView;
 
 import io.micrometer.tracing.annotation.NewSpan;
 
@@ -33,9 +33,9 @@ public interface EmployeeService {
 
 	boolean exists(Long employeeId);
 
-	EmployeeInfo convertToInfo(Employee employee);
+	EmployeeView convertToView(Employee employeeView);
 
-	Employee convertToEmployee(EmployeeInfo employee);
+	Employee convertToEmployee(EmployeeView employeeView);
 
-	List<EmployeeInfo> convertToInfo(List<Employee> employees);
+	List<EmployeeView> convertToView(List<Employee> employees);
 }

@@ -7,8 +7,8 @@ import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.mc.employee.controller.EmployeeController;
-import com.mc.employee.info.EmployeeInfo;
-import com.mc.employee.info.EmployeeRequest;
+import com.mc.employee.view.EmployeeView;
+import com.mc.employee.view.EmployeeRequest;
 
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -17,11 +17,11 @@ import jakarta.validation.ValidatorFactory;
 @Component
 public class EmployeeRequestValidator {
 
-	public void validateEmployeeInfo(EmployeeInfo input) throws MethodArgumentNotValidException, NoSuchMethodException, SecurityException {
+	public void validateEmployeeInfo(EmployeeView input) throws MethodArgumentNotValidException, NoSuchMethodException, SecurityException {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
 
-		BeanPropertyBindingResult result = new BeanPropertyBindingResult(input, "employeeInfo");
+		BeanPropertyBindingResult result = new BeanPropertyBindingResult(input, "employeeView");
 		SpringValidatorAdapter adapter = new SpringValidatorAdapter(validator);
 		adapter.validate(input, result);
 
