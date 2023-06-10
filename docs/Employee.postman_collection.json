@@ -91,7 +91,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n\t\"employeeView\": {\r\n\t\t\"name\": \"Manager 2\",\r\n\t\t\"role\": \"MANAGER\",\r\n\t\t\"dateOfBirth\": \"1981-01-01\",\r\n\t\t\"email\": \"manager2@mc.com\",\r\n\t\t\"salary\": 20000.50,\r\n\t\t\"department\": \"DMP\",\r\n\t\t\"reportingManager\": {\r\n\t\t\t\"id\": 1\r\n\t\t}\r\n\t}\r\n}",
+					"raw": "{\r\n\t\"employeeView\": {\r\n\t\t\"name\": \"Manager 2\",\r\n\t\t\"role\": \"MANAGER\",\r\n\t\t\"dateOfBirth\": \"1981-01-01\",\r\n\t\t\"email\": \"manager2@mc.com\",\r\n\t\t\"salary\": 20000.50,\r\n\t\t\"department\": \"DISPUTE\",\r\n\t\t\"reportingManager\": {\r\n\t\t\t\"id\": 1\r\n\t\t}\r\n\t}\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
