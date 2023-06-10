@@ -1,7 +1,7 @@
 # mc-employee-api
 
 ## Overview
-The API was built using Spring 3.1.0 with Java 17.
+The API was built using Spring Boot 3.1.0 with Java 17.
 
 Users of this application should be able to:
 
@@ -29,7 +29,7 @@ Once application is started, use below links to learn about the API.
 
 Default profile works fine in local environment.
 
-However, dev and ssl are available. 
+However, dev and ssl profiles are available. 
 
 Use ssl profile to start the application with https and self-signed certificate.
 
@@ -45,7 +45,11 @@ Postman project is attached to the source code.
 
 Check file [Employee.postman_collection.json] in the project docs folder in GitHub.
 
-## This application uses a H2 in-memory database.
+## Database
+
+This application uses a H2 in-memory database.
+
+Use below URL and login information to access the console.
 
 > http://localhost:8080/h2-console
 
@@ -57,31 +61,32 @@ Check file [Employee.postman_collection.json] in the project docs folder in GitH
 
 Use Zipkin to monitor application performance. This step is optional if want to enable observability.
 
-Edit application.yaml to enable Zipkin tracing. 
-
-> Set spring.zipkin.enabled: true
-
-Zipkin starts as per default in below url.
-
-http://localhost:9411/zipkin/
-
 ### Download
 
 https://repo1.maven.org/maven2/io/zipkin/zipkin-server/2.24.0/zipkin-server-2.24.0-slim.jar
 
-### Running via Java:
+### Running via Java
 
 ```shell
 java -jar zipkin-server-2.24.0-slim.jar
 ```
 
-## Generate new certificates
-Use below commands to generate non-production certificates.
+### Web Access
 
-```sh
+Use below URL to access Zipkin traces.
+
+> http://localhost:9411/zipkin/
+
+## Generate HTTPS Certificates
+Below commands were used to generate non-production self-signed certificates.
+
+```shell
 keytool -genkeypair -alias mc-employee-api -keyalg RSA -keysize 4096 -storetype JKS -keystore mc-employee-api.jks -validity 3650 -storepass changeit
 keytool -genkeypair -alias mc-employee-api -keyalg RSA -keysize 4096 -storetype PKCS12 -keystore mc-employee-api.p12 -validity 3650 -storepass changeit
+```
 
 Should you have a signed JKS, use this command to convert to PKCS12:
+
+```shell
 keytool -import -alias mc-employee-api -file myCertificate.crt -keystore mc-employee-api.p12 -storepass changeit
 ```
