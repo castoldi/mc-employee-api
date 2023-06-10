@@ -1,11 +1,9 @@
 package com.mc.employee.exception;
 
-import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@Builder
-@Data
+@Getter
 @EqualsAndHashCode(callSuper = false)
 public class EmployeeNotFoundException extends Exception {
 

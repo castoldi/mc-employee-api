@@ -2,6 +2,7 @@ package com.mc.employee.mapper;
 
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import com.mc.employee.entity.Employee;
@@ -12,39 +13,26 @@ import com.mc.employee.view.EmployeeView;
  */
 @Component
 public class EmployeeMapper {
+	
 	public EmployeeView mapEmployee(Employee employee) {
-		EmployeeView info = null;
+		EmployeeView employeeView = null;
 		
 		if (employee != null) {
-			info = EmployeeView.builder()
-				.id(employee.getId())
-				.name(employee.getName())
-				.salary(employee.getSalary())
-				.role(employee.getRole())
-				.dateOfBirth(employee.getDateOfBirth())
-				.email(employee.getEmail())
-				.department(employee.getDepartment())
-				.reportingManager(mapEmployee(employee.getReportingManager()))
-				.build();
+			employeeView = new EmployeeView();
+			BeanUtils.copyProperties(employee, employeeView);
+			employeeView.setReportingManager(mapEmployee(employee.getReportingManager()));
 		}
 		
-		return info;
+		return employeeView;
 	}
 
 	public Employee mapEmployeeView(EmployeeView view) {
 		Employee employee = null;
 		
 		if (view != null) {
-			employee = Employee.builder()
-					.id(view.getId())
-					.name(view.getName())
-					.salary(view.getSalary())
-					.role(view.getRole())
-					.dateOfBirth(view.getDateOfBirth())
-					.email(view.getEmail())
-					.department(view.getDepartment())
-					.reportingManager(mapEmployeeView(view.getReportingManager()))
-					.build();
+			employee = new Employee();
+			BeanUtils.copyProperties(view, employee);
+			employee.setReportingManager(mapEmployeeView(view.getReportingManager()));
 		}
 		
 		return employee;

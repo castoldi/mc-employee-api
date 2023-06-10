@@ -40,7 +40,7 @@ public class CostAllocationServiceImpl implements CostAllocationService {
 	}
 
 	private BigDecimal sumSalaries(List<Employee> employees) {
-		return employees.stream().map(e -> e.getSalary()).reduce(BigDecimal.ZERO, BigDecimal::add);
+		return employees.stream().map(Employee::getSalary).reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
 }

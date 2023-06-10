@@ -3,6 +3,7 @@ package com.mc.employee.controller;
 import java.net.URI;
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,12 +20,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.mc.employee.entity.Employee;
 import com.mc.employee.exception.EmployeeNotFoundException;
 import com.mc.employee.service.EmployeeService;
-import com.mc.employee.validation.EmployeeRequestValidator;
 import com.mc.employee.view.EmployeeRequest;
 import com.mc.employee.view.EmployeeView;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -36,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class EmployeeController {
 	private final EmployeeService employeeService;
-	private final EmployeeRequestValidator employeeRequestValidator;
 
 	@GetMapping
 	public List<EmployeeView> findAll() {
@@ -54,18 +53,13 @@ public class EmployeeController {
 		return employeeService.convertToView(employee);
 	}
 
-	@SneakyThrows
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Void> addEmployee(@RequestBody EmployeeRequest request) {
+	public ResponseEntity<Void> addEmployee(@Valid @RequestBody EmployeeRequest request) {
 		log.info("Add a new employee");
 		
 		EmployeeView employeeView = request.getEmployeeView();
 		Employee employee = employeeService.convertToEmployee(employeeView);
-		
-		completeManagerInfo(employeeView, employee);
-		
-		employeeRequestValidator.validateEmployeeInfo(employeeView);
 		
 		employee = employeeService.save(employee);
 		
@@ -73,39 +67,23 @@ public class EmployeeController {
 		return ResponseEntity.created(location).build();
 	}
 
-	/**
-	 * Completing the manager info in order to run the Same Department validation.
-	 */
-	private void completeManagerInfo(EmployeeView employeeView, Employee employee) throws EmployeeNotFoundException {
-		if (employeeView.getReportingManager() != null) {
-			log.info("Completing reporting manager information given the managerId={}", employeeView.getReportingManager().getId());
-			Employee manager = employeeService.findById(employeeView.getReportingManager().getId());
-			employee.setReportingManager(manager);
-			employeeView.setReportingManager(employeeService.convertToView(manager));
-		}
-	}
-
 	@PutMapping
-	@ResponseStatus(code = HttpStatus.NO_CONTENT)
-	public void updateEmployee(@RequestBody EmployeeRequest request) throws EmployeeNotFoundException {
-		log.info("Update an employee’s detail.");
+	@ResponseStatus(code = HttpStatus.OK)
+	public EmployeeView updateEmployee(@Valid @RequestBody EmployeeRequest request) throws EmployeeNotFoundException {
+		log.info("Update an employee’s detail for employeeId={}", request.getEmployeeView().getId());
 		
 		EmployeeView employeeView = request.getEmployeeView();
 
 		Employee employee = employeeService.findById(employeeView.getId());
 		Employee manager = employeeService.findById(employeeView.getReportingManager().getId());
-
-		employee.setDateOfBirth(employeeView.getDateOfBirth());
-		employee.setDepartment(employeeView.getDepartment());
-		employee.setName(employeeView.getName());
+		
+		BeanUtils.copyProperties(employeeView, employee, "id", "reportingManager");
 		employee.setReportingManager(manager);
-		employee.setRole(employeeView.getRole());
-		employee.setSalary(employeeView.getSalary());
-		employee.setEmail(employeeView.getEmail());
 
-		employeeService.save(employee);
+		employee = employeeService.save(employee);
+		
+		return employeeService.convertToView(employee);
 	}
-
 
 	@DeleteMapping(path = "/{employeeId}")
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)

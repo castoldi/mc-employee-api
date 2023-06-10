@@ -37,7 +37,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		Optional<Employee> employee = repository.findById(employeeId);
 
 		if (employee.isEmpty()) {
-			throw EmployeeNotFoundException.builder().employeeId(employeeId).build();
+			throw new EmployeeNotFoundException(employeeId);
 		}
 
 		return employee.get();

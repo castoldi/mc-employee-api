@@ -17,7 +17,6 @@ import com.mc.employee.view.CostAllocationResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -34,7 +33,7 @@ public class CostAllocationController {
 	@Operation(summary = "Calculate the cost allocation of a Department.")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Cost allocation calculation succeeded.") })
 	@GetMapping(path = "/department/{department}")
-	public CostAllocationResponse calculateCostsByDepartment(@Valid @PathVariable Department department) {
+	public CostAllocationResponse calculateCostsByDepartment(@PathVariable Department department) {
 		
 		BigDecimal totalCostAllocationByDeparment = costAllocationService.calculateCostAllocationByDeparment(department);
 		
@@ -48,7 +47,7 @@ public class CostAllocationController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Cost allocation calculation succeeded."), 
 			@ApiResponse(responseCode = "404", description = "Manager not found") })
 	@GetMapping(path = "/manager/{employeeId}")
-	public CostAllocationResponse calculateCostsByManager(@Valid @PathVariable Long employeeId) throws  EmployeeNotFoundException {
+	public CostAllocationResponse calculateCostsByManager(@PathVariable Long employeeId) throws  EmployeeNotFoundException {
 		
 		Employee manager = employeeService.findById(employeeId);
 		

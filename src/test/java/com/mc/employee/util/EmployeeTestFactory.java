@@ -25,7 +25,7 @@ public class EmployeeTestFactory {
 
 	public static Employee buildManager(Long managerId) {
 		return Employee.builder()
-				.name("Manager")
+				.name("Manager " + managerId)
 				.id(managerId)
 				.dateOfBirth(LocalDate.of(1981, 1, 1))
 				.email("manager" + managerId + "@mc.com")

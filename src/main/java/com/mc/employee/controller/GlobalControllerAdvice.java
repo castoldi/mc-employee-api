@@ -33,14 +33,14 @@ public class GlobalControllerAdvice {
 		log.warn("onConstraintValidationException. {}", exception.getMessage());
 		
 		ErrorMessage error = ErrorMessage.builder().error(exception.getMessage()).build();
-		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<List<ErrorMessage>> handleValidationErrors(MethodArgumentNotValidException ex) {
 		log.warn("Validation error occourred. {}, {}", ex.getMessage(), ex.getParameter());
 		
-		List<ErrorMessage> errors = ex.getBindingResult().getFieldErrors().stream().map(e -> new ErrorMessage(e.getField() + " " + e.getDefaultMessage())).collect(Collectors.toList());
+		List<ErrorMessage> errors = ex.getBindingResult().getFieldErrors().stream().map(e -> new ErrorMessage(e.getField() + ": " + e.getDefaultMessage())).collect(Collectors.toList());
 		errors.addAll(ex.getBindingResult().getGlobalErrors().stream().map(e -> new ErrorMessage(e.getDefaultMessage())).toList());
 
 		return new ResponseEntity<>(errors, new HttpHeaders(), HttpStatus.BAD_REQUEST);
@@ -48,10 +48,10 @@ public class GlobalControllerAdvice {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorMessage> onException(Exception exception) {
-		log.error("Generic Exception.", exception);
+		log.error("Unexpected Exception.", exception);
 		
 		ErrorMessage error = ErrorMessage.builder().error(exception.getMessage()).build();
-		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 }

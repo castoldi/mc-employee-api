@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,7 @@ import com.mc.employee.util.EmployeeTestFactory;
 import com.mc.employee.view.EmployeeRequest;
 import com.mc.employee.view.EmployeeView;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.SneakyThrows;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -98,10 +100,11 @@ class EmployeeControllerSpringBootTest {
 		when(employeeService.convertToEmployee(employeeView)).thenReturn(employee);
 		when(employeeService.convertToView(employee.getReportingManager())).thenReturn(employeeView);
 		when(employeeService.save(employee)).thenReturn(employee);
+		when(employeeService.findById(employee.getReportingManager().getId())).thenReturn(employee.getReportingManager());
 		
 		mockMvc.perform(post(EMPLOYEE_BASE_PATH)
-				.content(objectMapper.writeValueAsString(request))
-				.contentType(MediaType.APPLICATION_JSON))
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().isCreated());
 	}
@@ -119,14 +122,15 @@ class EmployeeControllerSpringBootTest {
 		when(employeeService.convertToEmployee(employeeView)).thenReturn(employee);
 		when(employeeService.convertToView(employee.getReportingManager())).thenReturn(employeeView);
 		when(employeeService.save(employee)).thenReturn(employee);
+		when(employeeService.findById(employee.getReportingManager().getId())).thenReturn(employee.getReportingManager());
 		
 		mockMvc.perform(post(EMPLOYEE_BASE_PATH)
-				.content(objectMapper.writeValueAsString(request))
-				.contentType(MediaType.APPLICATION_JSON))
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$[0].error").exists())
-				.andExpect(jsonPath("$[0].error", is("name must not be null")));
+				.andExpect(jsonPath("$[0].error", is("employeeView.name: must not be null")));
 	}
 	
 	@SneakyThrows
@@ -147,12 +151,12 @@ class EmployeeControllerSpringBootTest {
 		when(employeeService.save(employee)).thenReturn(employee);
 		
 		mockMvc.perform(post(EMPLOYEE_BASE_PATH)
-				.content(objectMapper.writeValueAsString(request))
-				.contentType(MediaType.APPLICATION_JSON))
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$[0].error").exists())
-				.andExpect(jsonPath("$[0].error", is("The direct reports of a Manager must belong to the same Department of the Manager")));
+				.andExpect(jsonPath("$[0].error", is("employeeView: The direct reports of a Manager must belong to the same Department of the Manager")));
 	}
 	
 	@SneakyThrows
@@ -164,12 +168,19 @@ class EmployeeControllerSpringBootTest {
 		
 		when(employeeService.findById(employeeView.getId())).thenReturn(employee);
 		when(employeeService.findById(employeeView.getReportingManager().getId())).thenReturn(employee.getReportingManager());
+		when(employeeService.convertToView(employee.getReportingManager())).thenReturn(employeeView.getReportingManager());
+		when(employeeService.save(employee)).thenReturn(employee);
+		when(employeeService.convertToView(employee)).thenReturn(employeeView);
 		
 		mockMvc.perform(put(EMPLOYEE_BASE_PATH)
-				.content(objectMapper.writeValueAsString(request))
-				.contentType(MediaType.APPLICATION_JSON))
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
 				.andDo(print())
-				.andExpect(status().isNoContent());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").exists())
+				.andExpect(content().string((containsString("Developer 1"))))
+				.andExpect(content().string((containsString("Manager 2"))))
+				.andExpect(jsonPath("$.*", hasSize(8)));
 	}
 
 	@SneakyThrows
@@ -181,8 +192,8 @@ class EmployeeControllerSpringBootTest {
 		when(employeeService.exists(employeeView.getId())).thenReturn(true);
 		
 		mockMvc.perform(delete(EMPLOYEE_BASE_PATH + "/" + employeeView.getId())
-				.content(objectMapper.writeValueAsString(request))
-				.contentType(MediaType.APPLICATION_JSON))
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().isNoContent());
 	}
@@ -197,10 +208,58 @@ class EmployeeControllerSpringBootTest {
 		
 		mockMvc.perform(delete(EMPLOYEE_BASE_PATH + "/" + employeeView.getId())
 				.content(objectMapper.writeValueAsString(request))
-				.contentType(MediaType.APPLICATION_JSON))
+					.contentType(MediaType.APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.error").exists())
 				.andExpect(jsonPath("$.error", is("Employee id 33 not found.")));
+	}
+	
+	@SneakyThrows
+	@Test
+	void testAddEmployee_ConstraintViolationException() {
+		Employee employee = EmployeeTestFactory.buildDeveloper(1L, 2L);
+		EmployeeView employeeView = EmployeeTestFactory.buildDeveloperView(1L, 2L);
+		EmployeeRequest request = EmployeeRequest.builder().employeeView(employeeView).build();
+		
+		when(employeeService.convertToEmployee(employeeView)).thenReturn(employee);
+		when(employeeService.convertToView(employee.getReportingManager())).thenReturn(employeeView);
+		
+		String exceptionMessage = "Hibernate test exception";
+		when(employeeService.save(employee)).thenThrow(new ConstraintViolationException(exceptionMessage, new HashSet<>()));
+		
+		when(employeeService.findById(employee.getReportingManager().getId())).thenReturn(employee.getReportingManager());
+		
+		mockMvc.perform(post(EMPLOYEE_BASE_PATH)
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
+				.andExpect(status().isInternalServerError())
+				.andExpect(jsonPath("$.error").exists())
+				.andExpect(jsonPath("$.error", is(exceptionMessage)));
+	}
+	
+	@SneakyThrows
+	@Test
+	void testAddEmployee_UnexpectedException() {
+		Employee employee = EmployeeTestFactory.buildDeveloper(1L, 2L);
+		EmployeeView employeeView = EmployeeTestFactory.buildDeveloperView(1L, 2L);
+		EmployeeRequest request = EmployeeRequest.builder().employeeView(employeeView).build();
+		
+		when(employeeService.convertToEmployee(employeeView)).thenReturn(employee);
+		when(employeeService.convertToView(employee.getReportingManager())).thenReturn(employeeView);
+		
+		String exceptionMessage = "Testing unexpected exception";
+		when(employeeService.save(employee)).thenThrow(new IllegalArgumentException(exceptionMessage));
+		
+		when(employeeService.findById(employee.getReportingManager().getId())).thenReturn(employee.getReportingManager());
+		
+		mockMvc.perform(post(EMPLOYEE_BASE_PATH)
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
+				.andExpect(status().isInternalServerError())
+				.andExpect(jsonPath("$.error").exists())
+				.andExpect(jsonPath("$.error", is(exceptionMessage)));
 	}
 }
