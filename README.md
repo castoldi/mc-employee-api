@@ -19,17 +19,17 @@ Users of this application should be able to:
 
 ## Open API and Swagger
 
-Once application is started, use below links to learn about the API.
+Once application is started, use below links to learn how to use the API.
 
 - http://localhost:8080/api-docs
 - http://localhost:8080/swagger-ui/index.html
 
 
-## Start with SSL and DEV profile
+## SSL and DEV profiles
 
 Default profile works fine in local environment.
 
-However, dev and ssl profiles are available. 
+However, dev and ssl profiles are available.
 
 Use ssl profile to start the application with https and self-signed certificate.
 
