@@ -23,6 +23,9 @@ import com.mc.employee.service.EmployeeService;
 import com.mc.employee.view.EmployeeRequest;
 import com.mc.employee.view.EmployeeView;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 public class EmployeeController {
 	private final EmployeeService employeeService;
 
+	@Operation(summary = "List Department structure. (ie. All employees in a hierarchy).")
 	@GetMapping
 	public List<EmployeeView> findAll() {
 		log.info("Find all employees.");
@@ -45,6 +49,10 @@ public class EmployeeController {
 		return employeeService.convertToView(employees);
 	}
 
+	@Operation(summary = "Get employee info.")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "The employee was found."),
+			@ApiResponse(responseCode = "404", description = "The employee was not found.") })
 	@GetMapping(path = "/{employeeId}")
 	public EmployeeView findEmployeeById(@PathVariable Long employeeId) throws EmployeeNotFoundException {
 		log.info("Find employee by id={}", employeeId);
@@ -53,6 +61,8 @@ public class EmployeeController {
 		return employeeService.convertToView(employee);
 	}
 
+	@Operation(summary = "Add a new employee.")
+	@ApiResponses(value = {@ApiResponse(responseCode = "201", description = "The employee was added successfully.")})
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Void> addEmployee(@Valid @RequestBody EmployeeRequest request) {
@@ -67,6 +77,10 @@ public class EmployeeController {
 		return ResponseEntity.created(location).build();
 	}
 
+	@Operation(summary = "Update an employee’s detail.")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "The employee record was updated successfully."),
+			@ApiResponse(responseCode = "404", description = "The employee was not found.") })
 	@PutMapping
 	@ResponseStatus(code = HttpStatus.OK)
 	public EmployeeView updateEmployee(@Valid @RequestBody EmployeeRequest request) throws EmployeeNotFoundException {
@@ -85,6 +99,10 @@ public class EmployeeController {
 		return employeeService.convertToView(employee);
 	}
 
+	@Operation(summary = "Remove an employee.")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "204", description = "The employee was removed successfully."),
+			@ApiResponse(responseCode = "404", description = "The employee was not found.") })
 	@DeleteMapping(path = "/{employeeId}")
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable Long employeeId) throws EmployeeNotFoundException {
