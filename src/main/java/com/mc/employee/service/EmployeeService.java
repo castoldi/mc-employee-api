@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.Cacheable;
 import com.mc.employee.entity.Department;
 import com.mc.employee.entity.Employee;
 import com.mc.employee.exception.EmployeeNotFoundException;
+import com.mc.employee.view.DepartmentStructureResponse;
 import com.mc.employee.view.EmployeeView;
 
 public interface EmployeeService {
@@ -18,6 +19,8 @@ public interface EmployeeService {
 	Employee findById(Long employeeId) throws EmployeeNotFoundException;
 
 	List<Employee> findAll(int pageNumber, int pageSize);
+	
+	DepartmentStructureResponse listDepartmentStructure(Department department);
 
 	List<Employee> findByDepartment(Department department);
 

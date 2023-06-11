@@ -3,6 +3,7 @@ package com.mc.employee.service;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -27,8 +28,12 @@ import com.mc.employee.exception.EmployeeNotFoundException;
 import com.mc.employee.mapper.EmployeeMapper;
 import com.mc.employee.repository.EmployeeRespository;
 import com.mc.employee.util.EmployeeTestFactory;
+import com.mc.employee.view.DepartmentStructureResponse;
 import com.mc.employee.view.EmployeeView;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 class EmployeeServiceDatabaseTest {
 
@@ -214,6 +219,27 @@ class EmployeeServiceDatabaseTest {
 		BigDecimal actual = service.calculateCostAllocationByManagerId(employeeId);
 		
 		assertEquals(totalCostAllocation, actual);
+	}
+
+	@Test
+	void testListDepartmentStructure() {
+		List<Employee> managers = Arrays.asList(EmployeeTestFactory.buildManager(1L));
+		List<Employee> directReports = Arrays.asList(EmployeeTestFactory.buildDeveloper(2L, null));
+		EmployeeView managerView = EmployeeTestFactory.buildManagerView(1L);
+		List<EmployeeView> employeesView = Arrays.asList(EmployeeTestFactory.buildDeveloperView(2L));
+
+		when(mapper.mapEmployee(managers.get(0))).thenReturn(managerView);
+		when(mapper.mapEmployeeList(directReports)).thenReturn(employeesView);
+		
+		when(repository.findByDepartmentAndReportingManagerIdIsNull(Department.DISPUTE)).thenReturn(managers);
+		when(repository.findByReportingManagerId(managers.get(0).getId())).thenReturn(directReports);
+		
+		DepartmentStructureResponse response = service.listDepartmentStructure(Department.DISPUTE);
+		log.debug(response.toString());
+		assertNotNull(response);
+		assertNotNull(response.getDepartmentStructure());
+		assertNotNull(response.getDepartmentStructure().get(Department.DISPUTE));
+		assertEquals(1, response.getDepartmentStructure().get(Department.DISPUTE).size());
 	}
 
 }

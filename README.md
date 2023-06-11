@@ -83,6 +83,12 @@ Use below URL to access Zipkin traces.
 
 > http://localhost:9411/zipkin/
 
+### Disable Observability
+
+To disable observability and Zipkin, change below property to '0.0' in application.yml
+
+> management.tracing.sampling.probability: 0.0
+
 ## Generate HTTPS Certificates
 Below commands were used to generate non-production self-signed certificates.
 

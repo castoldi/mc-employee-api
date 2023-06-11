@@ -31,6 +31,7 @@ import com.mc.employee.entity.Department;
 import com.mc.employee.entity.Employee;
 import com.mc.employee.service.EmployeeServiceDatabase;
 import com.mc.employee.util.EmployeeTestFactory;
+import com.mc.employee.view.DepartmentStructureResponse;
 import com.mc.employee.view.EmployeeRequest;
 import com.mc.employee.view.EmployeeView;
 
@@ -282,5 +283,26 @@ class EmployeeControllerSpringBootTest {
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.error").exists())
 				.andExpect(jsonPath("$.error", is("Employee id 33 not found.")));
+	}
+	
+	@SneakyThrows
+	@Test
+	void testListDepartmentStructure() {
+		EmployeeView managerView = EmployeeTestFactory.buildManagerView(1L);
+		EmployeeView directReportView = EmployeeTestFactory.buildDeveloperView(2L);
+		managerView.setDirectReports(Arrays.asList(directReportView));
+		
+		DepartmentStructureResponse response = new DepartmentStructureResponse();
+		response.getDepartmentStructure().put(Department.DMP, Arrays.asList(managerView));
+		
+		when(employeeService.listDepartmentStructure(Department.DMP)).thenReturn(response);
+		
+		mockMvc.perform(get(EMPLOYEE_BASE_PATH + "/department/DMP"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(content().string((containsString("departmentStructure"))))
+				.andExpect(content().string((containsString("Developer 2"))))
+				.andExpect(content().string((containsString("Manager 1"))))
+				.andExpect(jsonPath("$.*", hasSize(1)));
 	}
 }

@@ -1,6 +1,7 @@
 package com.mc.employee.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,12 +15,16 @@ import com.mc.employee.entity.Employee;
 import com.mc.employee.exception.EmployeeNotFoundException;
 import com.mc.employee.mapper.EmployeeMapper;
 import com.mc.employee.repository.EmployeeRespository;
+import com.mc.employee.view.DepartmentStructureResponse;
 import com.mc.employee.view.EmployeeView;
 
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Employee service implementation with relational database.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Observed(name = "employee-service-db")
@@ -56,6 +61,30 @@ public class EmployeeServiceDatabase implements EmployeeService {
 		Page<Employee> page = repository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.ASC, "name")));
 		
 		return page.toList();
+	}
+
+	@Override
+	public DepartmentStructureResponse listDepartmentStructure(Department department) {
+		log.info("List Department structure. (ie. All employees in a hierarchy)");
+		DepartmentStructureResponse response = new DepartmentStructureResponse();
+		
+		response.getDepartmentStructure().put(department, new ArrayList<>());
+
+		List<Employee> departmentManagers = repository.findByDepartmentAndReportingManagerIdIsNull(department);
+		
+		departmentManagers.forEach(departmentManager -> {
+			List<Employee> directReportEmployees = repository.findByReportingManagerId(departmentManager.getId());
+			
+			EmployeeView managerView = convertToView(departmentManager);
+			managerView.setDirectReports(convertToView(directReportEmployees));
+			
+			//Delete reporting manager from View objects.
+			managerView.getDirectReports().forEach(e -> e.setReportingManager(null));
+			
+			response.getDepartmentStructure().get(department).add(managerView);
+		});
+		
+		return response;
 	}
 	
 	@Override

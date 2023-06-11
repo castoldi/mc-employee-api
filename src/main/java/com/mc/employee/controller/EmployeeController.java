@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.mc.employee.entity.Department;
 import com.mc.employee.entity.Employee;
 import com.mc.employee.exception.EmployeeNotFoundException;
 import com.mc.employee.service.EmployeeService;
+import com.mc.employee.view.DepartmentStructureResponse;
 import com.mc.employee.view.EmployeeRequest;
 import com.mc.employee.view.EmployeeView;
 
@@ -42,13 +44,21 @@ public class EmployeeController {
 	private final EmployeeService employeeService;
 	private static final String DEFAULT_PAGE_SIZE = "1000";
 
-	@Operation(summary = "List Department structure. (ie. All employees in a hierarchy).")
+	@Operation(summary = "List all employees with pagination.")
 	@GetMapping
 	public List<EmployeeView> findAll(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int size) {
 		log.info("Find all employees.");
 
 		List<Employee> employees = employeeService.findAll(page, size);
 		return employeeService.convertToView(employees);
+	}
+	
+	@Operation(summary = "List department structure. (ie. All employees in a hierarchy).")
+	@GetMapping("/department/{department}")
+	public DepartmentStructureResponse listDepartmentStructure(@PathVariable Department department) {
+		log.info("List '{}' Department Structure.", department);
+
+		return employeeService.listDepartmentStructure(department);
 	}
 
 	@Operation(summary = "Get employee info.")

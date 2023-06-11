@@ -2,6 +2,7 @@ package com.mc.employee.view;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import com.mc.employee.entity.Department;
 import com.mc.employee.entity.EmployeeRole;
@@ -50,6 +51,9 @@ public class EmployeeView {
 	@NotNull
 	private Department department;
 
-	@Schema(description = "Employee reporting manager. Only field 'id' is required.", nullable = true)
+	@Schema(description = "Employee reporting manager. Only field 'id' is required.", example = "{ \"id\": 1 }", nullable = true)
 	private EmployeeView reportingManager;
+	
+	@Schema(description = "List of all employees reporting to the manager.", nullable = true)
+	private List<EmployeeView> directReports;
 }
