@@ -11,6 +11,9 @@ spring:
     username: sa
     password: password
     driverClassName: org.h2.Driver
+    hikari: 
+      maximum-pool-size: 20
+      minimum-idle: 0
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     defer-datasource-initialization: true
@@ -45,6 +48,7 @@ logging:
   level:
     com.mc.employee: DEBUG
     org.springframework.cache: DEBUG
+    com.zaxxer.hikari: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M:%line traceId=%X{traceId:-} - %msg%n"
     
@@ -74,3 +78,14 @@ server:
     key-alias: mc-employee-api
     key-password: changeit
   port: 8443
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+logging:
+  level:
+    com.mc.employee: INFO
+    org.springframework.cache: INFO
+    com.zaxxer.hikari: INFO
