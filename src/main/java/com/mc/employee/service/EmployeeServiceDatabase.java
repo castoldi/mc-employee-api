@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.mc.employee.entity.Department;
@@ -47,9 +50,12 @@ public class EmployeeServiceDatabase implements EmployeeService {
 	}
 	
 	@Override
-	public List<Employee> findAll() {
+	public List<Employee> findAll(int pageNumber, int pageSize) {
 		log.info("Find all employees");
-		return (List<Employee>) repository.findAll();
+		
+		Page<Employee> page = repository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.ASC, "name")));
+		
+		return page.toList();
 	}
 	
 	@Override

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -39,13 +40,14 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class EmployeeController {
 	private final EmployeeService employeeService;
+	private static final String DEFAULT_PAGE_SIZE = "1000";
 
 	@Operation(summary = "List Department structure. (ie. All employees in a hierarchy).")
 	@GetMapping
-	public List<EmployeeView> findAll() {
+	public List<EmployeeView> findAll(@RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int size) {
 		log.info("Find all employees.");
-		
-		List<Employee> employees = employeeService.findAll();
+
+		List<Employee> employees = employeeService.findAll(page, size);
 		return employeeService.convertToView(employees);
 	}
 

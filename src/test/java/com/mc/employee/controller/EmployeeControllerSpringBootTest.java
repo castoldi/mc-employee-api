@@ -56,7 +56,7 @@ class EmployeeControllerSpringBootTest {
 	@Test
 	void testFindAll() {
 		List<Employee> employees = Arrays.asList(EmployeeTestFactory.buildDeveloper(1L, 2L),EmployeeTestFactory.buildDeveloper(3L, 2L));
-		when(employeeService.findAll()).thenReturn(employees);
+		when(employeeService.findAll(0, 1000)).thenReturn(employees);
 		
 		List<EmployeeView> employeesView = Arrays.asList(EmployeeTestFactory.buildDeveloperView(1L, 2L),EmployeeTestFactory.buildDeveloperView(3L, 2L));
 		when(employeeService.convertToView(employees)).thenReturn(employeesView);

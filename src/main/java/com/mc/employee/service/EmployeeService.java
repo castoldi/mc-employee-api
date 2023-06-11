@@ -17,7 +17,7 @@ public interface EmployeeService {
 	@Cacheable(cacheNames = "employees",key="#employeeId")
 	Employee findById(Long employeeId) throws EmployeeNotFoundException;
 
-	List<Employee> findAll();
+	List<Employee> findAll(int pageNumber, int pageSize);
 
 	List<Employee> findByDepartment(Department department);
 

@@ -17,6 +17,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import com.mc.employee.entity.Department;
 import com.mc.employee.entity.Employee;
@@ -37,6 +40,9 @@ class EmployeeServiceDatabaseTest {
 
 	@InjectMocks
 	private EmployeeServiceDatabase service;
+	
+	@Mock
+	private Page<Employee> employeesPage;
 
 	@Test
 	void testSave() {
@@ -79,9 +85,10 @@ class EmployeeServiceDatabaseTest {
 	void testFindAll() {
 		List<Employee> employees = Arrays.asList(EmployeeTestFactory.buildDeveloper(1L, 2L), EmployeeTestFactory.buildDeveloper(3L, 4L));
 		
-		when(repository.findAll()).thenReturn(employees);
+		when(employeesPage.toList()).thenReturn(employees);
+		when(repository.findAll(PageRequest.of(0, 100, Sort.by(Sort.Direction.ASC, "name")))).thenReturn(employeesPage);
 		
-		List<Employee> actual = service.findAll();
+		List<Employee> actual = service.findAll(0, 100);
 		
 		assertThat(actual, notNullValue());
 		assertThat(employees.size(), is(actual.size()));
