@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "List Department structure. (ie. All employees in a hierarchy)",
+			"name": "Find All employees paginated",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -30,6 +30,28 @@
 							"key": "size",
 							"value": "1000"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Department structure. (ie. All employees in a hierarchy)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/employee/department/DMP",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"employee",
+						"department",
+						"DMP"
 					]
 				}
 			},
@@ -73,35 +95,6 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n\t\"employeeView\": {\r\n\t\t\"name\": \"Developer 1\",\r\n\t\t\"role\": \"DEVELOPER\",\r\n\t\t\"dateOfBirth\": \"1981-01-01\",\r\n\t\t\"email\": \"developer1@mc.com\",\r\n\t\t\"salary\": 1000000.98,\r\n\t\t\"department\": \"DMP\",\r\n\t\t\"reportingManager\": {\r\n\t\t\t\"id\": 1\r\n\t\t}\r\n\t}\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:8080/api/v1/employee",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"v1",
-						"employee"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add a new Manager 2",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n\t\"employeeView\": {\r\n\t\t\"name\": \"Manager 2\",\r\n\t\t\"role\": \"MANAGER\",\r\n\t\t\"dateOfBirth\": \"1981-01-01\",\r\n\t\t\"email\": \"manager2@mc.com\",\r\n\t\t\"salary\": 20000.50,\r\n\t\t\"department\": \"DISPUTE\",\r\n\t\t\"reportingManager\": {\r\n\t\t\t\"id\": 1\r\n\t\t}\r\n\t}\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
