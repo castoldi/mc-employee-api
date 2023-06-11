@@ -111,7 +111,7 @@ class EmployeeControllerSpringBootTest {
 
 	@SneakyThrows
 	@Test
-	void testAddEmployeeMissingNameField() {
+	void testAddEmployee_MissingNameField() {
 		Employee employee = EmployeeTestFactory.buildDeveloper(1L, 2L);
 		
 		EmployeeView employeeView = EmployeeTestFactory.buildDeveloperView(1L, 2L);
@@ -135,7 +135,7 @@ class EmployeeControllerSpringBootTest {
 	
 	@SneakyThrows
 	@Test
-	void testAddEmployeeDifferentDepartment() {
+	void testAddEmployee_DifferentDepartment() {
 		Employee employee = EmployeeTestFactory.buildDeveloper(1L, 2L);
 		
 		EmployeeView employeeView = EmployeeTestFactory.buildDeveloperView(1L, 2L);
@@ -157,62 +157,6 @@ class EmployeeControllerSpringBootTest {
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$[0].error").exists())
 				.andExpect(jsonPath("$[0].error", is("employeeView: The direct reports of a Manager must belong to the same Department of the Manager")));
-	}
-	
-	@SneakyThrows
-	@Test
-	void testUpdateEmployee() {
-		Employee employee = EmployeeTestFactory.buildDeveloper(1L, 2L);
-		EmployeeView employeeView = EmployeeTestFactory.buildDeveloperView(1L, 2L);
-		EmployeeRequest request = EmployeeRequest.builder().employeeView(employeeView).build();
-		
-		when(employeeService.findById(employeeView.getId())).thenReturn(employee);
-		when(employeeService.findById(employeeView.getReportingManager().getId())).thenReturn(employee.getReportingManager());
-		when(employeeService.convertToView(employee.getReportingManager())).thenReturn(employeeView.getReportingManager());
-		when(employeeService.save(employee)).thenReturn(employee);
-		when(employeeService.convertToView(employee)).thenReturn(employeeView);
-		
-		mockMvc.perform(put(EMPLOYEE_BASE_PATH)
-					.content(objectMapper.writeValueAsString(request))
-					.contentType(MediaType.APPLICATION_JSON))
-				.andDo(print())
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.name").exists())
-				.andExpect(content().string((containsString("Developer 1"))))
-				.andExpect(content().string((containsString("Manager 2"))))
-				.andExpect(jsonPath("$.*", hasSize(8)));
-	}
-
-	@SneakyThrows
-	@Test
-	void testDelete() {
-		EmployeeView employeeView = EmployeeTestFactory.buildDeveloperView(1L, 2L);
-		EmployeeRequest request = EmployeeRequest.builder().employeeView(employeeView).build();
-		
-		when(employeeService.exists(employeeView.getId())).thenReturn(true);
-		
-		mockMvc.perform(delete(EMPLOYEE_BASE_PATH + "/" + employeeView.getId())
-					.content(objectMapper.writeValueAsString(request))
-					.contentType(MediaType.APPLICATION_JSON))
-				.andDo(print())
-				.andExpect(status().isNoContent());
-	}
-
-	@SneakyThrows
-	@Test
-	void testDeleteEmployeeNotFoundException() {
-		EmployeeView employeeView = EmployeeTestFactory.buildDeveloperView(33L, 2L);
-		EmployeeRequest request = EmployeeRequest.builder().employeeView(employeeView).build();
-		
-		when(employeeService.exists(employeeView.getId())).thenReturn(false);
-		
-		mockMvc.perform(delete(EMPLOYEE_BASE_PATH + "/" + employeeView.getId())
-				.content(objectMapper.writeValueAsString(request))
-					.contentType(MediaType.APPLICATION_JSON))
-				.andDo(print())
-				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.error").exists())
-				.andExpect(jsonPath("$.error", is("Employee id 33 not found.")));
 	}
 	
 	@SneakyThrows
@@ -261,5 +205,82 @@ class EmployeeControllerSpringBootTest {
 				.andExpect(status().isInternalServerError())
 				.andExpect(jsonPath("$.error").exists())
 				.andExpect(jsonPath("$.error", is(exceptionMessage)));
+	}
+	
+	@SneakyThrows
+	@Test
+	void testUpdateEmployee() {
+		Employee employee = EmployeeTestFactory.buildDeveloper(1L, 2L);
+		EmployeeView employeeView = EmployeeTestFactory.buildDeveloperView(1L, 2L);
+		EmployeeRequest request = EmployeeRequest.builder().employeeView(employeeView).build();
+		
+		when(employeeService.findById(employeeView.getId())).thenReturn(employee);
+		when(employeeService.findById(employeeView.getReportingManager().getId())).thenReturn(employee.getReportingManager());
+		when(employeeService.convertToView(employee.getReportingManager())).thenReturn(employeeView.getReportingManager());
+		when(employeeService.save(employee)).thenReturn(employee);
+		when(employeeService.convertToView(employee)).thenReturn(employeeView);
+		
+		mockMvc.perform(put(EMPLOYEE_BASE_PATH)
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").exists())
+				.andExpect(content().string((containsString("Developer 1"))))
+				.andExpect(content().string((containsString("Manager 2"))))
+				.andExpect(jsonPath("$.*", hasSize(8)));
+	}
+	
+	@SneakyThrows
+	@Test
+	void testUpdateEmployee_SelfReportingManagerConstraint() {
+		Employee employee = EmployeeTestFactory.buildDeveloper(1L, 1L);
+		EmployeeView employeeView = EmployeeTestFactory.buildDeveloperView(1L, 1L);
+		EmployeeRequest request = EmployeeRequest.builder().employeeView(employeeView).build();
+		
+		when(employeeService.convertToEmployee(employeeView)).thenReturn(employee);
+		when(employeeService.convertToView(employee.getReportingManager())).thenReturn(employeeView);
+		
+		when(employeeService.findById(employee.getReportingManager().getId())).thenReturn(employee.getReportingManager());
+		
+		mockMvc.perform(post(EMPLOYEE_BASE_PATH)
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.[0]error").exists())
+				.andExpect(jsonPath("$.[0]error", is("employeeView: An employee cannot have self as reporting manager.")));
+	}
+
+	@SneakyThrows
+	@Test
+	void testDelete() {
+		EmployeeView employeeView = EmployeeTestFactory.buildDeveloperView(1L, 2L);
+		EmployeeRequest request = EmployeeRequest.builder().employeeView(employeeView).build();
+		
+		when(employeeService.exists(employeeView.getId())).thenReturn(true);
+		
+		mockMvc.perform(delete(EMPLOYEE_BASE_PATH + "/" + employeeView.getId())
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
+				.andExpect(status().isNoContent());
+	}
+
+	@SneakyThrows
+	@Test
+	void testDelete_EmployeeNotFoundException() {
+		EmployeeView employeeView = EmployeeTestFactory.buildDeveloperView(33L, 2L);
+		EmployeeRequest request = EmployeeRequest.builder().employeeView(employeeView).build();
+		
+		when(employeeService.exists(employeeView.getId())).thenReturn(false);
+		
+		mockMvc.perform(delete(EMPLOYEE_BASE_PATH + "/" + employeeView.getId())
+				.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.error").exists())
+				.andExpect(jsonPath("$.error", is("Employee id 33 not found.")));
 	}
 }

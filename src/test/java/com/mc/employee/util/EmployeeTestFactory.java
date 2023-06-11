@@ -40,7 +40,22 @@ public class EmployeeTestFactory {
 		
 		return manager;
 	}
+
+	/**
+	 * Creates employeeView without manager.
+	 */
+	public static EmployeeView buildDeveloperView(Long employeeId) {
+		return buildDeveloperView(employeeId, null);
+	}
 	
+	/**
+	 * Creates employee without ID.
+	 */
+	public static EmployeeView buildDeveloperView() {
+		return buildDeveloperView(null, null);
+	}
+
+
 	public static EmployeeView buildDeveloperView(Long employeeId, Long managerId) {
 		return EmployeeView.builder()
 				.name("Developer " + employeeId)

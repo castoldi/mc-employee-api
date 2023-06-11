@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import com.mc.employee.entity.Department;
 import com.mc.employee.entity.EmployeeRole;
 import com.mc.employee.validation.SameDepartmentConstraint;
+import com.mc.employee.validation.SelfReportingManagerConstraint;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
  * View Object that is used to send and receive data from the endpoints.   
  */
 @SameDepartmentConstraint
+@SelfReportingManagerConstraint
 @Data
 @Builder
 @AllArgsConstructor
