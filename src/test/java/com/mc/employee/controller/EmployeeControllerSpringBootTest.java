@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mc.employee.entity.Department;
 import com.mc.employee.entity.Employee;
-import com.mc.employee.service.EmployeeServiceImpl;
+import com.mc.employee.service.EmployeeServiceDatabase;
 import com.mc.employee.util.EmployeeTestFactory;
 import com.mc.employee.view.EmployeeRequest;
 import com.mc.employee.view.EmployeeView;
@@ -50,7 +50,7 @@ class EmployeeControllerSpringBootTest {
 	private MockMvc mockMvc;
 	
 	@MockBean
-	private EmployeeServiceImpl employeeService;
+	private EmployeeServiceDatabase employeeService;
 	
 	@SneakyThrows
 	@Test

@@ -1,5 +1,6 @@
 package com.mc.employee.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,13 +13,15 @@ import com.mc.employee.mapper.EmployeeMapper;
 import com.mc.employee.repository.EmployeeRespository;
 import com.mc.employee.view.EmployeeView;
 
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
+@Observed(name = "employee-service-db")
 @Service
-public class EmployeeServiceImpl implements EmployeeService {
+public class EmployeeServiceDatabase implements EmployeeService {
 
 	private final EmployeeRespository repository;
 	private final EmployeeMapper mapper;
@@ -86,5 +89,27 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public Employee convertToEmployee(EmployeeView employeeView) {
 		return mapper.mapEmployeeView(employeeView);
+	}
+
+	@Override
+	public BigDecimal calculateCostAllocationByDepartment(Department department) {
+		Optional<BigDecimal> totalCost = repository.costAllocationByDepartment(department);
+		
+		if (totalCost.isEmpty()) {
+			totalCost = Optional.of(BigDecimal.ZERO);
+		}
+		
+		return totalCost.get();
+	}
+
+	@Override
+	public BigDecimal calculateCostAllocationByManagerId(Long employeeId) {
+		Optional<BigDecimal> totalCost = repository.costAllocationByManagerId(employeeId);
+		
+		if (totalCost.isEmpty()) {
+			totalCost = Optional.of(BigDecimal.ZERO);
+		}
+		
+		return totalCost.get();
 	}
 }

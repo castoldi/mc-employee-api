@@ -1,29 +1,26 @@
 package com.mc.employee.service;
 
+import java.math.BigDecimal;
 import java.util.List;
+
+import org.springframework.cache.annotation.Cacheable;
 
 import com.mc.employee.entity.Department;
 import com.mc.employee.entity.Employee;
 import com.mc.employee.exception.EmployeeNotFoundException;
 import com.mc.employee.view.EmployeeView;
 
-import io.micrometer.tracing.annotation.NewSpan;
-
 public interface EmployeeService {
 
-	@NewSpan
 	Employee save(Employee employee);
 
-	@NewSpan
+	@Cacheable(cacheNames = "employees",key="#employeeId")
 	Employee findById(Long employeeId) throws EmployeeNotFoundException;
 
-	@NewSpan
 	List<Employee> findAll();
 
-	@NewSpan
 	List<Employee> findByDepartment(Department department);
 
-	@NewSpan
 	List<Employee> findByReportingManager(Long employeeId);
 
 	void remove(Long employeeId);
@@ -35,4 +32,8 @@ public interface EmployeeService {
 	Employee convertToEmployee(EmployeeView employeeView);
 
 	List<EmployeeView> convertToView(List<Employee> employees);
+	
+	BigDecimal calculateCostAllocationByDepartment(Department department);
+
+	BigDecimal calculateCostAllocationByManagerId(Long employeeId);
 }

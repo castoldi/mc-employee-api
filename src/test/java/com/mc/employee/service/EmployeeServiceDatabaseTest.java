@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +27,7 @@ import com.mc.employee.util.EmployeeTestFactory;
 import com.mc.employee.view.EmployeeView;
 
 @ExtendWith(MockitoExtension.class)
-class EmployeeServiceTest {
+class EmployeeServiceDatabaseTest {
 
 	@Mock
 	private EmployeeRespository repository;
@@ -35,7 +36,7 @@ class EmployeeServiceTest {
 	private EmployeeMapper mapper;
 
 	@InjectMocks
-	private EmployeeServiceImpl service;
+	private EmployeeServiceDatabase service;
 
 	@Test
 	void testSave() {
@@ -158,6 +159,54 @@ class EmployeeServiceTest {
 		
 		assertThat(actual, notNullValue());
 		assertThat(actual, is(employee));
+	}
+
+	@Test
+	void testCalculateCostAllocationByDepartment() {
+		BigDecimal totalCostAllocation = BigDecimal.valueOf(22.23);
+		Department department = Department.DISPUTE;
+		
+		when(repository.costAllocationByDepartment(department)).thenReturn(Optional.of(totalCostAllocation));
+		
+		BigDecimal actual = service.calculateCostAllocationByDepartment(department);
+		
+		assertEquals(totalCostAllocation, actual);		
+	}
+	
+	@Test
+	void testCalculateCostAllocationByDepartmentEmptyDatabaseResults() {
+		BigDecimal totalCostAllocation = BigDecimal.ZERO;
+		Department department = Department.DISPUTE;
+		
+		when(repository.costAllocationByDepartment(department)).thenReturn(Optional.empty());
+		
+		BigDecimal actual = service.calculateCostAllocationByDepartment(department);
+		
+		assertEquals(totalCostAllocation, actual);		
+	}
+	
+	@Test
+	void testCalculateCostAllocationByManagerId() {
+		BigDecimal totalCostAllocation = BigDecimal.valueOf(11.11);
+		Long employeeId = 1L;
+		
+		when(repository.costAllocationByManagerId(employeeId)).thenReturn(Optional.of(totalCostAllocation));
+		
+		BigDecimal actual = service.calculateCostAllocationByManagerId(employeeId);
+		
+		assertEquals(totalCostAllocation, actual);
+	}
+	
+	@Test
+	void testCalculateCostAllocationByManagerIdEmptyDatabaseResults() {
+		BigDecimal totalCostAllocation = BigDecimal.ZERO;
+		Long employeeId = 1L;
+		
+		when(repository.costAllocationByManagerId(employeeId)).thenReturn(Optional.empty());
+		
+		BigDecimal actual = service.calculateCostAllocationByManagerId(employeeId);
+		
+		assertEquals(totalCostAllocation, actual);
 	}
 
 }

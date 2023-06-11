@@ -25,19 +25,25 @@ Once application is started, use below links to learn how to use the API.
 - http://localhost:8080/swagger-ui/index.html
 
 
-## SSL and DEV profiles
+## Available Spring Profiles
 
 Default profile works fine in local environment.
 
-However, dev and ssl profiles are available.
+However, below are some other available profiles.
 
+### SSL
 Use ssl profile to start the application with https and self-signed certificate.
 
 Add below VM arguments if needed.
 
--Dspring.profiles.active=dev,ssl
+-Dspring.profiles.active=ssl
 
 HTTPS URL example: https://localhost:8443/api/v1/employee
+
+### memory-cost-allocation
+This profile will calculate the cost allocation in memory using Java Stream API instead of doing with database queries.
+
+-Dspring.profiles.active=memory-cost-allocation
 
 ## Postman
 

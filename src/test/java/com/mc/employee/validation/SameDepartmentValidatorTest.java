@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.mc.employee.entity.Employee;
 import com.mc.employee.exception.EmployeeNotFoundException;
-import com.mc.employee.service.EmployeeServiceImpl;
+import com.mc.employee.service.EmployeeServiceDatabase;
 import com.mc.employee.util.EmployeeTestFactory;
 import com.mc.employee.view.EmployeeView;
 
@@ -26,7 +26,7 @@ class SameDepartmentValidatorTest {
 	private SameDepartmentValidator sameDepartmentValidator;
 	
 	@Mock
-	private EmployeeServiceImpl employeeService;
+	private EmployeeServiceDatabase employeeService;
 	
 	@Mock
 	private ConstraintValidatorContext context;

@@ -24,15 +24,21 @@ public class EmployeeTestFactory {
 	}
 
 	public static Employee buildManager(Long managerId) {
-		return Employee.builder()
-				.name("Manager " + managerId)
-				.id(managerId)
-				.dateOfBirth(LocalDate.of(1981, 1, 1))
-				.email("manager" + managerId + "@mc.com")
-				.role(EmployeeRole.MANAGER)
-				.salary(BigDecimal.valueOf(2.2))
-				.department(Department.DISPUTE)
-				.build();
+		Employee manager = null;
+		
+		if (managerId != null) {
+			manager = Employee.builder()
+						.name("Manager " + managerId)
+						.id(managerId)
+						.dateOfBirth(LocalDate.of(1981, 1, 1))
+						.email("manager" + managerId + "@mc.com")
+						.role(EmployeeRole.MANAGER)
+						.salary(BigDecimal.valueOf(2.2))
+						.department(Department.DISPUTE)
+						.build();
+		}
+		
+		return manager;
 	}
 	
 	public static EmployeeView buildDeveloperView(Long employeeId, Long managerId) {
@@ -49,14 +55,20 @@ public class EmployeeTestFactory {
 	}
 
 	public static EmployeeView buildManagerView(Long managerId) {
-		return EmployeeView.builder()
-				.name("Manager " + managerId)
-				.id(managerId)
-				.dateOfBirth(LocalDate.of(1981, 1, 1))
-				.email("manager" + managerId + "@mc.com")
-				.role(EmployeeRole.MANAGER)
-				.salary(BigDecimal.valueOf(2.2))
-				.department(Department.DISPUTE)
-				.build();
+		EmployeeView manager = null;
+		
+		if (managerId != null) {
+			manager = EmployeeView.builder()
+						.name("Manager " + managerId)
+						.id(managerId)
+						.dateOfBirth(LocalDate.of(1981, 1, 1))
+						.email("manager" + managerId + "@mc.com")
+						.role(EmployeeRole.MANAGER)
+						.salary(BigDecimal.valueOf(2.2))
+						.department(Department.DISPUTE)
+						.build();
+		}
+				
+		return manager;
 	}
 }
