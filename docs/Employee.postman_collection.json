@@ -11,7 +11,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/v1/employee",
+					"raw": "localhost:8080/api/v1/employee?page=0&size=1000",
 					"host": [
 						"localhost"
 					],
@@ -20,6 +20,16 @@
 						"api",
 						"v1",
 						"employee"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "1000"
+						}
 					]
 				}
 			},
@@ -148,7 +158,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/v1/employee/2",
+					"raw": "localhost:8080/api/v1/employee/1",
 					"host": [
 						"localhost"
 					],
@@ -157,7 +167,7 @@
 						"api",
 						"v1",
 						"employee",
-						"2"
+						"1"
 					]
 				}
 			},
