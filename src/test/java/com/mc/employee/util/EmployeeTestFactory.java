@@ -2,6 +2,7 @@ package com.mc.employee.util;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import com.mc.employee.entity.Department;
 import com.mc.employee.entity.Employee;
@@ -11,7 +12,7 @@ import com.mc.employee.view.EmployeeView;
 public class EmployeeTestFactory {
 	
 	public static Employee buildDeveloper(Long employeeId, Long managerId) {
-		return Employee.builder()
+		Employee employee = Employee.builder()
 				.name("Developer " + employeeId)
 				.id(employeeId)
 				.dateOfBirth(LocalDate.of(1981, 1, 1))
@@ -21,6 +22,11 @@ public class EmployeeTestFactory {
 				.salary(BigDecimal.valueOf(1.1))
 				.department(Department.DISPUTE)
 				.build();
+		if (employee.getReportingManager() != null) {
+			employee.getReportingManager().setDirectReports(Arrays.asList(employee));			
+		}
+		
+		return employee;
 	}
 
 	public static Employee buildManager(Long managerId) {

@@ -1,7 +1,6 @@
 package com.mc.employee.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,21 +67,9 @@ public class EmployeeServiceDatabase implements EmployeeService {
 		log.info("List Department structure. (ie. All employees in a hierarchy)");
 		DepartmentStructureResponse response = new DepartmentStructureResponse();
 		
-		response.getDepartmentStructure().put(department, new ArrayList<>());
-
 		List<Employee> departmentManagers = repository.findByDepartmentAndReportingManagerIdIsNull(department);
-		
-		departmentManagers.forEach(departmentManager -> {
-			List<Employee> directReportEmployees = repository.findByReportingManagerId(departmentManager.getId());
-			
-			EmployeeView managerView = convertToView(departmentManager);
-			managerView.setDirectReports(convertToView(directReportEmployees));
-			
-			//Delete reporting manager from View objects.
-			managerView.getDirectReports().forEach(e -> e.setReportingManager(null));
-			
-			response.getDepartmentStructure().get(department).add(managerView);
-		});
+		List<EmployeeView> managersView = convertToView(departmentManagers);
+		response.getDepartmentStructure().put(department, managersView);
 		
 		return response;
 	}

@@ -31,14 +31,6 @@ class EmployeeMapperTest {
 		assertThat(employeeView.getName(), is(employee.getName()));
 		assertThat(employeeView.getRole(), is(employee.getRole()));
 		assertThat(employeeView.getSalary(), is(employee.getSalary()));
-		
-		assertThat(employeeView.getReportingManager().getId(), is(employee.getReportingManager().getId()));
-		assertThat(employeeView.getReportingManager().getDateOfBirth(), is(employee.getReportingManager().getDateOfBirth()));
-		assertThat(employeeView.getReportingManager().getDepartment(), is(employee.getReportingManager().getDepartment()));
-		assertThat(employeeView.getReportingManager().getEmail(), is(employee.getReportingManager().getEmail()));
-		assertThat(employeeView.getReportingManager().getName(), is(employee.getReportingManager().getName()));
-		assertThat(employeeView.getReportingManager().getRole(), is(employee.getReportingManager().getRole()));
-		assertThat(employeeView.getReportingManager().getSalary(), is(employee.getReportingManager().getSalary()));
 	}
 
 	@Test
@@ -68,6 +60,11 @@ class EmployeeMapperTest {
 	@Test
 	void testMapEmployeeList() {
 		List<Employee> employees = Arrays.asList(EmployeeTestFactory.buildDeveloper(1L, 2L), EmployeeTestFactory.buildDeveloper(3L, 2L));
+		employees.forEach(e -> {
+			List<Employee> directs = Arrays.asList(EmployeeTestFactory.buildDeveloper(1L, 2L), EmployeeTestFactory.buildDeveloper(3L, 2L));
+			directs.forEach(d -> d.setReportingManager(null));
+			e.setDirectReports(directs);	
+		});
 		
 		List<EmployeeView> employeesView = mapper.mapEmployeeList(employees);
 		

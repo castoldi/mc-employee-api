@@ -77,11 +77,14 @@ public class EmployeeController {
 	@ApiResponses(value = {@ApiResponse(responseCode = "201", description = "The employee was added successfully.")})
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Void> addEmployee(@Valid @RequestBody EmployeeRequest request) {
+	public ResponseEntity<Void> addEmployee(@Valid @RequestBody EmployeeRequest request) throws EmployeeNotFoundException {
 		log.info("Add a new employee");
 		
 		EmployeeView employeeView = request.getEmployeeView();
 		Employee employee = employeeService.convertToEmployee(employeeView);
+		if (employeeView.getReportingManager() != null) {
+			employee.setReportingManager(employeeService.findById(employeeView.getReportingManager().getId()));
+		}
 		
 		employee = employeeService.save(employee);
 		
