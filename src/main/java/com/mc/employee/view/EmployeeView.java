@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mc.employee.entity.Department;
 import com.mc.employee.entity.EmployeeRole;
 import com.mc.employee.validation.SameDepartmentConstraint;
@@ -17,7 +18,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * View Object that is used to send and receive data from the endpoints.   
+ * View Object that is used to send and receive data from the endpoints.
  */
 @SameDepartmentConstraint
 @SelfReportingManagerConstraint
@@ -25,6 +26,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class EmployeeView {
 
 	private Long id;
@@ -32,7 +34,7 @@ public class EmployeeView {
 	@Schema(description = "Employee name", example = "Firstname Lastname", nullable = false)
 	@NotNull
 	private String name;
-	
+
 	@Schema(description = "Employee role", example = "DEVELOPER", nullable = false)
 	private EmployeeRole role;
 
@@ -46,14 +48,14 @@ public class EmployeeView {
 	@Schema(description = "Employee annual base salary", example = "1000000.99", nullable = false)
 	@NotNull
 	private BigDecimal salary;
-	
+
 	@Schema(description = "Employee department", nullable = false)
 	@NotNull
 	private Department department;
 
 	@Schema(description = "Employee reporting manager. Only field 'id' is required.", example = "{ \"id\": 1 }", nullable = true)
 	private EmployeeView reportingManager;
-	
+
 	@Schema(description = "List of all employees reporting to the manager.", nullable = true)
 	private List<EmployeeView> directReports;
 }

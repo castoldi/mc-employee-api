@@ -48,7 +48,6 @@ springdoc:
 logging:
   level:
     com.mc.employee: DEBUG
-    org.springframework.cache: DEBUG
     com.zaxxer.hikari: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M:%line traceId=%X{traceId:-} - %msg%n"
@@ -94,5 +93,4 @@ springdoc:
 logging:
   level:
     com.mc.employee: INFO
-    org.springframework.cache: INFO
     com.zaxxer.hikari: INFO

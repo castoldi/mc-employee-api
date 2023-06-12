@@ -20,7 +20,14 @@ public class EmployeeMapper {
 		if (employee != null) {
 			employeeView = new EmployeeView();
 			BeanUtils.copyProperties(employee, employeeView);
-			employeeView.setReportingManager(mapEmployee(employee.getReportingManager()));
+			
+			EmployeeView reportingManagerView = mapEmployee(employee.getReportingManager());
+			employeeView.setReportingManager(reportingManagerView);
+			
+			if (employee.getDirectReports() != null) {
+				employee.getDirectReports().forEach(e -> e.setReportingManager(null));
+				employeeView.setDirectReports(mapEmployeeList(employee.getDirectReports()));
+			}
 		}
 		
 		return employeeView;

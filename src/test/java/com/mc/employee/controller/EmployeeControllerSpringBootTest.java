@@ -3,6 +3,7 @@ package com.mc.employee.controller;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -59,7 +60,7 @@ class EmployeeControllerSpringBootTest {
 		List<Employee> employees = Arrays.asList(EmployeeTestFactory.buildDeveloper(1L, 2L),EmployeeTestFactory.buildDeveloper(3L, 2L));
 		when(employeeService.findAll(0, 1000)).thenReturn(employees);
 		
-		List<EmployeeView> employeesView = Arrays.asList(EmployeeTestFactory.buildDeveloperView(1L, 2L),EmployeeTestFactory.buildDeveloperView(3L, 2L));
+		List<EmployeeView> employeesView = Arrays.asList(EmployeeTestFactory.buildDeveloperView(1L, 2L),EmployeeTestFactory.buildManagerView(2L));
 		when(employeeService.convertToView(employees)).thenReturn(employeesView);
 		
 		mockMvc.perform(get(EMPLOYEE_BASE_PATH))
@@ -67,7 +68,6 @@ class EmployeeControllerSpringBootTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].name").exists())
 				.andExpect(content().string((containsString("Developer 1"))))
-				.andExpect(content().string((containsString("Developer 3"))))
 				.andExpect(content().string((containsString("Manager 2"))))
 				.andExpect(jsonPath("$.*", hasSize(2)));
 				
@@ -98,10 +98,27 @@ class EmployeeControllerSpringBootTest {
 		EmployeeView employeeView = EmployeeTestFactory.buildDeveloperView(1L, 2L);
 		EmployeeRequest request = EmployeeRequest.builder().employeeView(employeeView).build();
 		
-		when(employeeService.convertToEmployee(employeeView)).thenReturn(employee);
+		when(employeeService.convertToEmployee(any(EmployeeView.class))).thenReturn(employee);
 		when(employeeService.convertToView(employee.getReportingManager())).thenReturn(employeeView);
-		when(employeeService.save(employee)).thenReturn(employee);
+		when(employeeService.save(any(Employee.class))).thenReturn(employee);
 		when(employeeService.findById(employee.getReportingManager().getId())).thenReturn(employee.getReportingManager());
+		
+		mockMvc.perform(post(EMPLOYEE_BASE_PATH)
+					.content(objectMapper.writeValueAsString(request))
+					.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
+				.andExpect(status().isCreated());
+	}
+	
+	@SneakyThrows
+	@Test
+	void testAddEmployee_Manager() {
+		Employee employee = EmployeeTestFactory.buildManager(1L);
+		EmployeeView employeeView = EmployeeTestFactory.buildManagerView(1L);
+		EmployeeRequest request = EmployeeRequest.builder().employeeView(employeeView).build();
+		
+		when(employeeService.convertToEmployee(any(EmployeeView.class))).thenReturn(employee);
+		when(employeeService.save(any(Employee.class))).thenReturn(employee);
 		
 		mockMvc.perform(post(EMPLOYEE_BASE_PATH)
 					.content(objectMapper.writeValueAsString(request))
@@ -146,9 +163,9 @@ class EmployeeControllerSpringBootTest {
 		
 		EmployeeRequest request = EmployeeRequest.builder().employeeView(employeeView).build();
 		
-		when(employeeService.convertToEmployee(employeeView)).thenReturn(employee);
+		when(employeeService.convertToEmployee(any(EmployeeView.class))).thenReturn(employee);
 		when(employeeService.findById(employeeView.getReportingManager().getId())).thenReturn(employee.getReportingManager());
-		when(employeeService.convertToView(employee.getReportingManager())).thenReturn(employeeView.getReportingManager());
+		when(employeeService.convertToView(any(Employee.class))).thenReturn(employeeView.getReportingManager());
 		when(employeeService.save(employee)).thenReturn(employee);
 		
 		mockMvc.perform(post(EMPLOYEE_BASE_PATH)
